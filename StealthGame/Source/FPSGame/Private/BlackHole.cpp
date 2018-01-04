@@ -25,13 +25,11 @@ ABlackHole::ABlackHole()
 
 	// When component overlap -> OverlapInnerSphere called
 	InnerSphereComp->OnComponentBeginOverlap.AddDynamic(this, &ABlackHole::OverlapInnerSphere);
-	UE_LOG(LogTemp, Warning, TEXT("LOL"))
 
 }
 
 void ABlackHole::OverlapInnerSphere(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	UE_LOG(LogTemp, Warning, TEXT("LOL2"))
 		if (OtherActor)
 			OtherActor->Destroy();
 }
