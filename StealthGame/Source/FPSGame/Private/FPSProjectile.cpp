@@ -38,7 +38,13 @@ void AFPSProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPr
 	if ((OtherActor != NULL) && (OtherActor != this) && (OtherComp != NULL) && OtherComp->IsSimulatingPhysics())
 	{
 		OtherComp->AddImpulseAtLocation(GetVelocity() * 100.0f, GetActorLocation());
-
-		Destroy();
 	}
+	/*
+	 * Use MakeNoise to make noise
+	 * Instigator is already a variable in any Actor use for damage application
+	 * Instigator which is Pawn responsible for damage[also noise in here] cause by this actor.
+	 * Loudness is [0,1.0f]
+	 */
+	MakeNoise(1.0f, Instigator);
+	Destroy();
 }
