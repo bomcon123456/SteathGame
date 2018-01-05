@@ -33,8 +33,13 @@ protected:
 	UPawnSensingComponent* PawnSensingComp;
 	FRotator OriginalRotation;
 	FTimerHandle TimeHandle_ResetOrientation;
+
+	UPROPERTY(ReplicatedUsing=OnRep_GuardState)
 	EAIState GuardState;
 
+	/** This'll get called only on clients. */
+	UFUNCTION()
+	void OnRep_GuardState();
 	UFUNCTION()
 	void OnPawnSeen(APawn* SeenPawn);
 	UFUNCTION()
@@ -52,10 +57,6 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
-
-	// Called to bind functionality to input
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-
 	
 	
 };

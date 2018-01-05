@@ -29,6 +29,13 @@ AFPSProjectile::AFPSProjectile()
 
 	// Die after 3 seconds by default
 	InitialLifeSpan = 3.0f;
+
+	/*
+	* When it send to server, it will send to the client as well. ( create a copy in client)
+	* All the transform of it will be updated as the server.
+	*/
+	SetReplicates(true); 
+	SetReplicateMovement(true);
 }
 
 
@@ -44,7 +51,11 @@ void AFPSProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPr
 	 * Instigator is already a variable in any Actor use for damage application
 	 * Instigator which is Pawn responsible for damage[also noise in here] cause by this actor.
 	 * Loudness is [0,1.0f]
+	 * Check whether the code now running is the hosting (the server/ authority role)
 	 */
-	MakeNoise(1.0f, Instigator);
-	Destroy();
+	if (Role == ROLE_Authority)
+	{
+		MakeNoise(1.0f, Instigator);
+		Destroy();
+	}
 }

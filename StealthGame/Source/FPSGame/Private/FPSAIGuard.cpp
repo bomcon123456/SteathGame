@@ -4,6 +4,7 @@
 #include "Perception/PawnSensingComponent.h"
 #include "DrawDebugHelpers.h"
 #include "FPSGameMode.h"
+#include "Net/UnrealNetwork.h"
 
 
 // Sets default values
@@ -16,7 +17,6 @@ AFPSAIGuard::AFPSAIGuard()
 
 	PawnSensingComp->OnSeePawn.AddDynamic(this, &AFPSAIGuard::OnPawnSeen);
 	PawnSensingComp->OnHearNoise.AddDynamic(this, &AFPSAIGuard::OnNoiseHeard);
-	OriginalRotation = GetActorRotation();
 
 	GuardState = EAIState::Idle;
 }
@@ -82,17 +82,21 @@ void AFPSAIGuard::SetGuardState(EAIState NewState)
 	{
 		return;
 	}
-	GuardState = NewState;
-
-	OnStatedChanged(GuardState);
+	GuardState = NewState;	// From beginning of func till this line is on the Server.
+	OnRep_GuardState();		// Trigger available for the clients.
 }
 
+void AFPSAIGuard::OnRep_GuardState()
+{
+	OnStatedChanged(GuardState);
+}
 
 // Called when the game starts or when spawned
 void AFPSAIGuard::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	OriginalRotation = GetActorRotation();
+
 }
 
 // Called every frame
@@ -102,10 +106,14 @@ void AFPSAIGuard::Tick(float DeltaTime)
 
 }
 
-// Called to bind functionality to input
-void AFPSAIGuard::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
+/*
+* Apply default rule to replicate this variable (GuardState)
+* This GuardState will be accessable by Server + Clients
+* Will be synchronize by the OnRep_GuardState() (for Clients)
+*/
+void AFPSAIGuard::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifetimeProps) const
 {
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
+	DOREPLIFETIME(AFPSAIGuard, GuardState);
 }
-

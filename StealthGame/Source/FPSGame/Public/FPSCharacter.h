@@ -61,6 +61,15 @@ protected:
 	/** Fires a projectile. */
 	void Fire();
 
+	/*
+	* We need this so when press Fire, the client can't tell the Server to do the same, but only locally.
+	* Whenever we have "Server" in UFUNCTION, the generated.h file will generate a ...._Implementation + ..._Validation
+	* Reliable will definately reach the sever
+	* WithValidation is a must whenever use the SeverFunction.
+	*/
+	UFUNCTION(Server, Reliable, WithValidation)
+	void ServerFire();
+
 	/** Handles moving forward/backward */
 	void MoveForward(float Val);
 
@@ -76,5 +85,6 @@ public:
 	/** Returns FirstPersonCameraComponent subobject **/
 	UCameraComponent* GetFirstPersonCameraComponent() const { return CameraComponent; }
 
+	virtual void Tick(float DeltaTime) override;
 };
 
