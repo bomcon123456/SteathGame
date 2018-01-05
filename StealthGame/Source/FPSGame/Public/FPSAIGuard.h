@@ -7,6 +7,14 @@
 #include "FPSAIGuard.generated.h"
 
 class UPawnSensingComponent;
+// If it has blueprinttype, it's must be uint8
+UENUM(BlueprintType)
+enum class EAIState : uint8
+{
+	Idle,
+	Suspicious,
+	Alerted
+};
 
 UCLASS()
 class FPSGAME_API AFPSAIGuard : public ACharacter
@@ -25,6 +33,7 @@ protected:
 	UPawnSensingComponent* PawnSensingComp;
 	FRotator OriginalRotation;
 	FTimerHandle TimeHandle_ResetOrientation;
+	EAIState GuardState;
 
 	UFUNCTION()
 	void OnPawnSeen(APawn* SeenPawn);
@@ -32,6 +41,14 @@ protected:
 	void OnNoiseHeard(APawn* NoiseInstigator, const FVector& Location, float Volume);
 	UFUNCTION()
 	void ResetOrientation();
+	/*
+	* Instead of directly change the GuardState variable, using a function
+	* So that we can respond to this is BP
+	*/
+	void SetGuardState(EAIState NewState);
+	
+	UFUNCTION(BlueprintImplementableEvent, Category = "AI")
+	void OnStatedChanged(EAIState NewState);
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;

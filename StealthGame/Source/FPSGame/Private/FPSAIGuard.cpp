@@ -17,6 +17,8 @@ AFPSAIGuard::AFPSAIGuard()
 	PawnSensingComp->OnSeePawn.AddDynamic(this, &AFPSAIGuard::OnPawnSeen);
 	PawnSensingComp->OnHearNoise.AddDynamic(this, &AFPSAIGuard::OnNoiseHeard);
 	OriginalRotation = GetActorRotation();
+
+	GuardState = EAIState::Idle;
 }
 
 void AFPSAIGuard::OnPawnSeen(APawn* SeenPawn)
@@ -28,6 +30,7 @@ void AFPSAIGuard::OnPawnSeen(APawn* SeenPawn)
 	{
 		GM->CompleteMission(SeenPawn, false);
 	}
+	SetGuardState(EAIState::Alerted);
 }
 
 /*
@@ -35,7 +38,7 @@ void AFPSAIGuard::OnPawnSeen(APawn* SeenPawn)
  */
 void AFPSAIGuard::OnNoiseHeard(APawn* NoiseInstigator, const FVector& Location, float Volume)
 {
-
+	if (GuardState == EAIState::Alerted) { return; }
 	UE_LOG(LogTemp, Warning, TEXT("I hear you bietch"))
 	DrawDebugSphere(GetWorld(), Location, 32.0f, 12, FColor::Red, false, 10.0f);
 
@@ -62,12 +65,28 @@ void AFPSAIGuard::OnNoiseHeard(APawn* NoiseInstigator, const FVector& Location, 
 	*/
 	GetWorldTimerManager().ClearTimer(TimeHandle_ResetOrientation);
 	GetWorldTimerManager().SetTimer(TimeHandle_ResetOrientation, this, &AFPSAIGuard::ResetOrientation, 3.0f);
+
+	SetGuardState(EAIState::Suspicious);
 }
 
 void AFPSAIGuard::ResetOrientation()
 {
+	if (GuardState == EAIState::Alerted) { return; }
 	SetActorRotation(OriginalRotation);
+	SetGuardState(EAIState::Idle);
 }
+
+void AFPSAIGuard::SetGuardState(EAIState NewState)
+{
+	if (GuardState == NewState)
+	{
+		return;
+	}
+	GuardState = NewState;
+
+	OnStatedChanged(GuardState);
+}
+
 
 // Called when the game starts or when spawned
 void AFPSAIGuard::BeginPlay()
