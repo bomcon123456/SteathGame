@@ -38,7 +38,11 @@ void AFPSExtractionZone::HandleOverlap(UPrimitiveComponent* OverlappedComponent,
 
 	if (MyPawn->bIsCarryingObjective)
 	{
-
+		/*
+		* Because replication doesn't apply to GameMode, so when the clients run these line of code
+		* It will fail immediately.
+		* Why? Because if(GM) is false so it can't do anything inside.
+		*/
 		AFPSGameMode* GM = Cast<AFPSGameMode>(GetWorld()->GetAuthGameMode());	// Only work for single player.
 		if (GM)
 		{

@@ -19,16 +19,13 @@ public:
 	ABlackHole();
 
 protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
-
 	UPROPERTY(VisibleAnywhere, Category = "Components")
 	UStaticMeshComponent* MeshComp = nullptr;
 
 	// This one to pull components
 	UPROPERTY(VisibleAnywhere, Category = "Components")
 	USphereComponent* OutterSphereComp = nullptr;
-	// This one to destroy it
+	// This one to destroy those
 	UPROPERTY(VisibleAnywhere, Category = "Components")
 	USphereComponent* InnerSphereComp = nullptr;
 	TArray<UPrimitiveComponent*> NearbyObject;

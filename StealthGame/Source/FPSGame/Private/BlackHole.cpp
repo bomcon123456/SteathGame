@@ -30,16 +30,12 @@ ABlackHole::ABlackHole()
 
 void ABlackHole::OverlapInnerSphere(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-		if (OtherActor)
-			OtherActor->Destroy();
+	if (OtherActor)
+	{
+		OtherActor->Destroy();
+	}
 }
 
-// Called when the game starts or when spawned
-void ABlackHole::BeginPlay()
-{
-	Super::BeginPlay();
-	
-}
 
 // Called every frame
 void ABlackHole::Tick(float DeltaTime)

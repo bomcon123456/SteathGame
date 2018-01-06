@@ -49,6 +49,10 @@ void AFPSObjectiveActor::NotifyActorBeginOverlap(AActor* OtherActor)
 		AFPSCharacter* MyCharacter = Cast<AFPSCharacter>(OtherActor);
 		if (MyCharacter)
 		{
+			/*
+			* Because we make bIsCarryingObjective Replicated and having the rule (SetLifetime in Character.h)
+			* Whenever this variable changes on the server, all the clients will receive the variable too.
+			*/
 			MyCharacter->bIsCarryingObjective = true;
 
 			Destroy();
